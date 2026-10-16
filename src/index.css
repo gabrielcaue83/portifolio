@@ -1,0 +1,157 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+ * Design tokens — estética Cartoon Network
+ * Cores pop chapadas, contorno preto grosso e sombras duras sem blur.
+ * ------------------------------------------------------------------ */
+@theme {
+  --font-display: 'Bowlby One', 'Impact', system-ui, sans-serif;
+  --font-sans: 'Nunito', system-ui, sans-serif;
+
+  --color-ink: #000000;
+  --color-paper: #fffdf5;
+
+  --color-pop-yellow: #ffe600;
+  --color-pop-pink: #ff3ea5;
+  --color-pop-cyan: #00e5ff;
+  --color-pop-green: #39ff14;
+  --color-pop-orange: #ff7a00;
+  --color-pop-purple: #9b5cff;
+  --color-pop-red: #ff2e2e;
+  --color-pop-blue: #2e6bff;
+
+  /* Sombras duras (offset puro, zero blur) */
+  --shadow-cartoon-sm: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-cartoon: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-cartoon-lg: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+
+  --animate-wiggle: wiggle 0.4s ease-in-out infinite;
+  --animate-blink: blink 1s steps(1) infinite;
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(-2deg);
+    }
+    50% {
+      transform: rotate(2deg);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+ * Utilitários reutilizáveis
+ * ------------------------------------------------------------------ */
+
+/* Contorno + sombra padrão de qualquer "peça" cartoon */
+@utility cartoon-box {
+  border: 4px solid var(--color-ink);
+  box-shadow: var(--shadow-cartoon);
+}
+
+/* Interação "aperta o botão": a peça afunda e a sombra some */
+@utility cartoon-press {
+  transition:
+    transform 120ms ease-out,
+    box-shadow 120ms ease-out;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+  }
+
+  &:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1);
+  }
+}
+
+/* Contorno de texto estilo letreiro de desenho */
+@utility text-outline {
+  -webkit-text-stroke: 2px var(--color-ink);
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0px var(--color-ink);
+}
+
+/* Quadriculado preto e branco do logo clássico do Cartoon Network */
+@utility bg-checker {
+  background-color: var(--color-paper);
+  background-image:
+    linear-gradient(45deg, var(--color-ink) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--color-ink) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--color-ink) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--color-ink) 75%);
+  background-size: 40px 40px;
+  background-position:
+    0 0,
+    0 20px,
+    20px -20px,
+    -20px 0;
+}
+
+/* Retícula de pontos (halftone) para fundos de seção */
+@utility bg-halftone {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.18) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+
+/* ------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  html {
+    /* Lenis cuida do scroll suave */
+    scroll-behavior: auto;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  /* Cursor nativo some só quando o CustomCursor está ativo (mouse) */
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight uppercase;
+  }
+
+  ::selection {
+    @apply bg-pop-yellow text-ink;
+  }
+
+  :focus-visible {
+    outline: 4px solid var(--color-pop-cyan);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
