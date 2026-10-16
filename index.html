@@ -1,39 +1,499 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Cauê Gabriel — Design, Motion &amp; Sites</title>
-    <meta name="description" content="Identidade visual, motion design, animação vetorial e sites com GSAP e Three.js. Fale com Cauê Gabriel." />
-    <meta name="theme-color" content="#B6FF3B" />
-    <meta property="og:title" content="Cauê Gabriel — Design, Motion &amp; Sites" />
-    <meta property="og:description" content="Marcas, animações vetoriais e sites que se mexem de verdade." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Bowlby+One&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script>
-      // Se o JS principal nem carregar (arquivo 404, navegador antigo), mostra o motivo em vez de tela branca
-      window.addEventListener(
-        'error',
-        function (e) {
-          var root = document.getElementById('root')
-          if (!root || root.childNodes.length) return
-          var what = e.target && e.target.src ? 'Falha ao carregar ' + e.target.src : e.message
-          root.innerHTML =
-            '<pre style="margin:16px;padding:16px;border:4px solid #000;background:#ffe600;white-space:pre-wrap;font:16px monospace">Erro ao iniciar o site:\n' +
-            what +
-            '</pre>'
-        },
-        true,
-      )
-    </script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="pt-BR" data-world="home">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cauê Gabriel — GSAP, Three.js &amp; Motion</title>
+<meta name="description" content="Portfólio de Cauê Gabriel: um mundo para cada ferramenta. GSAP, Three.js e motion design com animação vetorial.">
+<meta name="theme-color" content="#0E0E0E">
+<meta property="og:title" content="Cauê Gabriel — GSAP, Three.js & Motion">
+<meta property="og:description" content="Um portfólio dividido em mundos: cada um feito com uma ferramenta diferente.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Geist:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&family=Lilita+One&family=Space+Mono:wght@400;700&family=Unbounded:wght@500;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script>
+(function(){var h=document.documentElement;h.classList.add('preload');
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('gs');
+setTimeout(function(){h.classList.remove('preload')},6500);})();
+</script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="boil" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/>
+  </filter>
+</svg>
+
+<div id="iris" aria-hidden="true"><div class="logo-pop">CG</div></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="guide" aria-hidden="true"><div class="rope rope-h"></div><div class="rope rope-v"></div><div class="mascot-slot" data-mascot="guide"></div></div>
+<canvas id="webgl" aria-label="Cena 3D feita com Three.js"></canvas>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="#inicio" aria-label="Cauê Gabriel, voltar ao início">CG</a>
+    <nav class="links" aria-label="Mundos">
+      <a href="#gsap" data-w="gsap"><i>01</i>GSAP</a>
+      <a href="#threejs" data-w="three" data-off="1.15"><i>02</i>Three.js</a>
+      <a href="#motion" data-w="motion"><i>03</i>Motion</a>
+      <a href="#trampos" data-w="work">Trampos</a>
+      <a href="#contato" data-w="contact">Contato</a>
+    </nav>
+    <a class="nav-wa" data-wa>WhatsApp</a>
+    <button class="burger" aria-label="Abrir menu"><i></i><i></i><i></i></button>
+  </div>
+  <div class="nav-prog" aria-hidden="true"><i></i></div>
+</header>
+<nav class="drawer" aria-label="Menu">
+  <a href="#gsap"><i>01</i>GSAP</a>
+  <a href="#threejs" data-off="1.15"><i>02</i>Three.js</a>
+  <a href="#motion"><i>03</i>Motion</a>
+  <a href="#trampos">Trampos</a>
+  <a href="#contato">Contato</a>
+  <a data-wa style="color:var(--mag)">WhatsApp ↗</a>
+</nav>
+
+<main>
+
+<!-- ============ 0 · INÍCIO (e a transição que leva pro GSAP) ============ -->
+<section class="t-intro" id="inicio" data-world="home">
+  <div class="stage">
+    <div class="g-bg" aria-hidden="true"><div class="g-glow"></div><div class="g-grid"></div><div class="g-floor"></div></div>
+
+    <div class="hero">
+      <div class="dots" aria-hidden="true"></div>
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <span class="tag">★ Design · Motion · Código</span>
+          <h1 class="h1" aria-label="Cauê Gabriel"><span class="line l1">Cauê</span><span class="line l2">Gabriel</span></h1>
+          <p class="lead">Eu faço marcas e sites que <mark>se mexem de verdade</mark>. Este portfólio é dividido em mundos, e cada um foi feito com uma ferramenta diferente.</p>
+          <div class="worlds-mini" aria-hidden="true"><span>01 GSAP</span><span>02 Three.js</span><span>03 Motion</span></div>
+          <div class="ctas">
+            <a class="btn btn-acid" href="#gsap">Entrar no primeiro mundo ↓</a>
+            <a class="btn btn-paper" data-wa>Chamar no WhatsApp</a>
+          </div>
+        </div>
+        <div class="hero-art">
+          <div class="burst" aria-hidden="true"></div>
+          <svg class="spark" style="left:6%;top:14%" viewBox="-24 -24 48 48" aria-hidden="true"><path d="M0-22C3-3 3-3 22 0 3 3 3 3 0 22-3 3-3 3-22 0-3-3-3-3 0-22Z"/></svg>
+          <svg class="spark m" style="right:8%;bottom:20%;width:34px" viewBox="-24 -24 48 48" aria-hidden="true"><path d="M0-22C3-3 3-3 22 0 3 3 3 3 0 22-3 3-3 3-22 0-3-3-3-3 0-22Z"/></svg>
+          <svg class="spark o" style="left:14%;bottom:10%;width:28px" viewBox="-24 -24 48 48" aria-hidden="true"><path d="M0-22C3-3 3-3 22 0 3 3 3 3 0 22-3 3-3 3-22 0-3-3-3-3 0-22Z"/></svg>
+          <div class="bubble" aria-live="polite"><span class="bubble-txt">E aí! Bora criar?</span><span class="caret"></span></div>
+          <div class="mascot-slot" data-mascot="hero" title="Clica em mim!"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-win" aria-hidden="true">
+      <div class="cw-top"><i></i><i></i><i></i><span>entrar.js</span></div>
+      <pre class="code" id="code"></pre>
+      <div class="mascot-slot hang-slot" data-mascot="hang"></div>
+    </div>
+
+    <div class="tl-ui" aria-hidden="true">
+      <div class="tl-ruler"><span>0s</span><span>0.5s</span><span>1s</span><span>1.5s</span><span>2s</span></div>
+      <div class="tl-track"><b>.hero</b><div class="tl-clip" style="left:4%;width:44%"></div><i class="kf" style="left:4%"></i><i class="kf" style="left:48%"></i></div>
+      <div class="tl-track"><b>.codigo</b><div class="tl-clip" style="left:30%;width:34%"></div><i class="kf" style="left:30%"></i><i class="kf" style="left:64%"></i></div>
+      <div class="tl-track"><b>.titulo</b><div class="tl-clip" style="left:58%;width:38%"></div><i class="kf" style="left:58%"></i><i class="kf" style="left:96%"></i></div>
+      <div class="tl-head"></div>
+    </div>
+
+    <div class="g-title-wrap" aria-hidden="true">
+      <div class="g-title">GSAP</div>
+      <p class="g-sub"><b>Mundo 01.</b> A biblioteca de animação que move a web. Aqui ela controla tudo. Continue rolando →</p>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true">role pra entrar <i></i></div>
+  </div>
+</section>
+
+<!-- ============ 1 · MUNDO GSAP ============ -->
+<section class="hs" id="gsap" data-world="gsap" aria-label="Mundo GSAP">
+  <div class="hs-bg" aria-hidden="true"><div class="g-grid"></div></div>
+  <div class="hs-track">
+
+    <article class="pn" data-pn="0">
+      <div class="pn-txt">
+        <span class="pn-tag">ease: "?"</span>
+        <h3>O ritmo do <em>movimento</em></h3>
+        <p>Toda animação acelera e freia de algum jeito. A curva de easing é o que separa um movimento robótico de um que tem personalidade. Escolhe uma:</p>
+        <div class="gbtns ease-btns">
+          <button class="gbtn" data-ease="power4.out">power4.out</button>
+          <button class="gbtn" data-ease="expo.inOut">expo.inOut</button>
+          <button class="gbtn" data-ease="back.out(2.5)">back.out</button>
+          <button class="gbtn" data-ease="elastic.out(1,0.3)">elastic.out</button>
+          <button class="gbtn" data-ease="bounce.out">bounce.out</button>
+          <button class="gbtn" data-ease="steps(6)">steps(6)</button>
+        </div>
+        <div class="pn-code">gsap.to(box, { x: 400, ease: "elastic.out(1, 0.3)" })</div>
+      </div>
+      <div class="pn-demo ease-demo">
+        <svg class="ease-graph" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid meet" aria-label="Gráfico da curva de easing">
+          <line class="ax" x1="20" y1="170" x2="210" y2="170"/><line class="ax" x1="20" y1="10" x2="20" y2="170"/><line class="ax" x1="20" y1="40" x2="210" y2="40" stroke-dasharray="3 5"/>
+          <text x="22" y="186">tempo →</text><text x="2" y="36">1</text><text x="8" y="174">0</text>
+          <path class="curve" d="M20 170 L200 40"/>
+          <circle class="dot" cx="20" cy="170" r="6"/>
+        </svg>
+        <div class="ease-track"><div class="ease-box"></div><span class="ease-name">power4.out</span></div>
+      </div>
+      <span class="pn-num" aria-hidden="true">01</span>
+    </article>
+
+    <article class="pn" data-pn="1">
+      <div class="pn-txt">
+        <span class="pn-tag">stagger: { grid, from }</span>
+        <h3>Um clique, <em>cem</em> animações</h3>
+        <p>Cada bolinha começa um pouquinho depois da vizinha, de acordo com a distância até onde você clicou. Clica em qualquer uma.</p>
+        <div class="pn-code">gsap.to(dots, { scale: 0.2, stagger: { each: 0.04, grid: "auto", from: i } })</div>
+      </div>
+      <div class="pn-demo stg-demo">
+        <div class="stg-grid" aria-label="Grade de bolinhas clicáveis"></div>
+        <span class="stg-label">from: "center"</span>
+      </div>
+      <span class="pn-num" aria-hidden="true">02</span>
+    </article>
+
+    <article class="pn" data-pn="2">
+      <div class="pn-txt">
+        <span class="pn-tag">Flip.from(state)</span>
+        <h3>Layout que <em>se arruma</em> sozinho</h3>
+        <p>O Flip grava onde cada bloco estava, troca o layout e anima a diferença. Muda o layout aqui embaixo ou clica num bloco pra ele crescer.</p>
+        <div class="gbtns flip-btns">
+          <button class="gbtn on" data-layout="grid">Grade</button>
+          <button class="gbtn" data-layout="list">Lista</button>
+          <button class="gbtn" data-layout="stack">Fila</button>
+          <button class="gbtn" data-shuffle>Embaralhar</button>
+        </div>
+        <div class="pn-code">const state = Flip.getState(tiles); mudaLayout(); Flip.from(state)</div>
+      </div>
+      <div class="pn-demo flip-demo">
+        <div class="flip-box" data-layout="grid">
+          <div class="tile" style="background:#0AE448">GSAP</div>
+          <div class="tile" style="background:#22E4FF">3D</div>
+          <div class="tile" style="background:#A585FF">SVG</div>
+          <div class="tile" style="background:#D9F7E8">UI</div>
+          <div class="tile" style="background:#22E4FF">JS</div>
+          <div class="tile" style="background:#0AE448">CSS</div>
+          <div class="tile" style="background:#D9F7E8">UX</div>
+          <div class="tile" style="background:#A585FF">WEB</div>
+        </div>
+      </div>
+      <span class="pn-num" aria-hidden="true">03</span>
+    </article>
+
+    <article class="pn" data-pn="3">
+      <div class="pn-txt">
+        <span class="pn-tag">SplitText + ScrambleText</span>
+        <h3>Texto que <em>atua</em></h3>
+        <p>Cada letra vira um objeto que pode pular, girar ou embaralhar. Passa o mouse no título ou troca a frase.</p>
+        <div class="gbtns"><button class="gbtn scr-btn">Embaralhar frase</button><button class="gbtn wave-btn">Onda nas letras</button></div>
+        <div class="pn-code">SplitText.create(titulo, { type: "chars" })</div>
+      </div>
+      <div class="pn-demo txt-demo">
+        <div class="split-big">Cada letra<br>se mexe</div>
+        <div class="scr-line">gsap.to(texto, { scrambleText })</div>
+      </div>
+      <span class="pn-num" aria-hidden="true">04</span>
+    </article>
+
+    <article class="pn" data-pn="4">
+      <div class="pn-txt">
+        <span class="pn-tag">motionPath + Draggable</span>
+        <h3>Trilhas e <em>física</em></h3>
+        <p>Um cometa segue um caminho desenhado em SVG. Gira o botão (pode jogar com força, ele tem inércia) pra mudar a velocidade do tempo.</p>
+        <div class="pn-code">Draggable.create(knob, { type: "rotation", inertia: true })</div>
+      </div>
+      <div class="pn-demo mp-demo">
+        <svg class="mp-svg" viewBox="0 0 400 260" aria-hidden="true">
+          <path class="track mp-path" d="M40 130 C40 40 160 40 200 130 S360 220 360 130 S240 40 200 130 S40 220 40 130 Z"/>
+          <g class="comet-trail"></g>
+          <g class="comet"><circle r="9" fill="#0AE448"/><circle r="16" fill="rgba(10,228,72,.25)"/></g>
+        </svg>
+        <div class="mp-knob-wrap">
+          <div class="mp-knob" role="slider" aria-label="Velocidade do tempo" aria-valuemin="0.2" aria-valuemax="3" aria-valuenow="1" tabindex="0"></div>
+          <span>timeScale</span><b class="mp-speed">1.0×</b>
+        </div>
+      </div>
+      <span class="pn-num" aria-hidden="true">05</span>
+    </article>
+
+  </div>
+  <div class="hs-bar" aria-hidden="true"><div><i></i>easing</div><div><i></i>stagger</div><div><i></i>flip</div><div><i></i>texto</div><div><i></i>trilhas</div></div>
+  <div class="hs-portal" aria-hidden="true"><div><span>saindo do plano</span><b>entrando no 3D</b></div></div>
+</section>
+
+<!-- ============ 2 · MUNDO THREE.JS ============ -->
+<section class="three" id="threejs" data-world="three" aria-label="Mundo Three.js">
+  <div class="t-stage">
+    <div class="lb t" aria-hidden="true"></div><div class="lb b" aria-hidden="true"></div>
+    <div class="t-load">carregando a cena 3D…</div>
+    <div class="rec" aria-hidden="true"><i></i><b class="shot-n">Shot 00</b><span class="tc">00:00:00:00</span></div>
+    <div class="cap c0" data-a="0.02" data-b="0.13">
+      <small>Mundo 02 · Three.js</small>
+      <h3>Three<em>.js</em></h3>
+      <p>Agora em três dimensões. Role devagar: a câmera vai te levar por cada cena.</p>
+    </div>
+    <div class="cap c1" data-a="0.17" data-b="0.33">
+      <small>Shot 01 · Materiais</small>
+      <h3>Metal de <em>verdade</em></h3>
+      <p>Reflexo, verniz e iridescência calculados em tempo real com luz de estúdio. Nada aqui é imagem pronta.</p>
+      <div class="tt"><span>MeshPhysicalMaterial</span><span>Luz HDR</span><span>Sombras</span></div>
+    </div>
+    <div class="cap c2" data-a="0.40" data-b="0.57">
+      <small>Shot 02 · Modelagem</small>
+      <h3>Eu, <em>em 3D</em></h3>
+      <p>Saí do papel: modelado direto em código, com cabelo cacheado, piscada e olhar que segue o seu mouse. Clica em mim.</p>
+      <div class="tt"><span>Geometria procedural</span><span>Rig simples</span><span>Raycaster</span></div>
+    </div>
+    <div class="cap c3" data-a="0.64" data-b="0.81">
+      <small>Shot 03 · Performance</small>
+      <h3>Mil e seiscentos <em>blocos</em></h3>
+      <p>Um mar de blocos que reage ao seu mouse, desenhado de uma vez só pela placa de vídeo.</p>
+      <div class="tt"><span>InstancedMesh</span><span>Física simples</span><span>60 fps</span></div>
+    </div>
+    <div class="cap c4" data-a="0.87" data-b="1.01">
+      <small>Corta!</small>
+      <h3>Fim da <em>cena</em></h3>
+      <p>Agora a gente sai do 3D e volta pro papel.</p>
+    </div>
+    <div class="t-hint" aria-hidden="true">arraste pra girar a câmera<br>clique nos objetos</div>
+  </div>
+</section>
+
+<!-- ============ transição: o lápis cobre o 3D ============ -->
+<section class="m-intro" aria-hidden="true">
+  <div class="m-stage">
+    <svg class="scrib" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+      <path class="s1" stroke="#FFD43B" stroke-width="230" d="M-150 60 L1750 -40 L-150 330 L1750 230 L-150 600 L1750 500 L-150 870 L1750 770 L-150 1110 L1750 1040"/>
+      <path class="s2" stroke="#6EC8FF" stroke-width="260" d="M-150 20 L1750 120 L-150 300 L1750 400 L-150 580 L1750 680 L-150 860 L1750 960 L-150 1100"/>
+    </svg>
+    <svg class="pencil" viewBox="0 0 60 200" aria-hidden="true">
+      <g transform="rotate(0)">
+        <rect x="14" y="8" width="32" height="120" rx="4" fill="#FF8A00" stroke="#0E0E0E" stroke-width="5"/>
+        <rect x="14" y="8" width="32" height="24" fill="#FF2E93" stroke="#0E0E0E" stroke-width="5"/>
+        <path d="M14 128 L30 176 L46 128 Z" fill="#FFF6E0" stroke="#0E0E0E" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M24 160 L30 176 L36 160 Z" fill="#0E0E0E"/>
+      </g>
+    </svg>
+    <div class="m-title-wrap">
+      <div class="m-title"><span>M</span><span>O</span><span>T</span><span>I</span><span>O</span><span>N</span></div>
+      <div class="m-sub">Mundo 03 · animação vetorial</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 · MUNDO MOTION ============ -->
+<section class="motion" id="motion" data-world="motion" aria-label="Mundo Motion design">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="left:6%;top:120px"></div>
+    <div class="cloud" style="right:8%;top:260px;transform:scale(.8)"></div>
+    <div class="cloud" style="left:40%;top:46%;transform:scale(.65)"></div>
+  </div>
+  <div class="wrap">
+    <div class="m-head">
+      <span class="kicker">Mundo 03 · Motion design</span>
+      <h2>Desenho que <span class="y">ganha vida</span></h2>
+      <p>Animação vetorial é desenho feito de matemática: leve, nítido em qualquer tela e pronto pra se mexer. Tudo aqui é SVG animado em código.</p>
+    </div>
+    <div class="mgrid">
+      <article class="mcard w6 pop">
+        <div class="scr walk-scr">
+          <span class="mtag">ciclo de caminhada</span>
+          <div class="sun" aria-hidden="true"></div>
+          <div class="ground-lines" aria-hidden="true"></div>
+          <div class="mascot-slot walker" data-mascot="walk" title="Clica pra eu pular"></div>
+        </div>
+        <div class="info">
+          <h3>Ciclo de caminhada</h3>
+          <p>O exercício clássico de todo animador: pernas como pêndulos e o corpo subindo duas vezes a cada passo. Clica em mim pra eu pular.</p>
+          <div class="mbtns walk-btns"><button class="mbtn on" data-speed="1">Andar</button><button class="mbtn" data-speed="2">Correr</button><button class="mbtn" data-speed="0">Parar</button></div>
+        </div>
+      </article>
+      <article class="mcard w3 pop">
+        <div class="scr face-scr">
+          <span class="mtag">expressões</span>
+          <div class="mascot-slot" data-mascot="face"></div>
+        </div>
+        <div class="info">
+          <h3>Expressões</h3>
+          <p>Personagem bom é personagem que sente. Troca o meu humor:</p>
+          <div class="mbtns face-btns"><button class="mbtn on" data-mood="smile">Feliz</button><button class="mbtn" data-mood="wow">Uau!</button><button class="mbtn" data-mood="angry">Bravo</button><button class="mbtn" data-mood="love">Apaixonado</button><button class="mbtn" data-mood="sleep">Sono</button></div>
+        </div>
+      </article>
+      <article class="mcard w3 pop">
+        <div class="scr logo-scr" role="button" tabindex="0" aria-label="Logo animado, clique para repetir">
+          <span class="mtag">logo animado</span>
+          <svg viewBox="0 0 320 270" aria-hidden="true">
+            <circle class="lg-bg" cx="160" cy="132" r="96" fill="#FFF6E0" stroke="#0E0E0E" stroke-width="6"/>
+            <path class="lg-c" d="M150 84 A52 52 0 1 0 150 180" fill="none" stroke="#0E0E0E" stroke-width="22" stroke-linecap="round"/>
+            <path class="lg-g" d="M222 96 A44 44 0 1 0 226 160 L226 134 L196 134" fill="none" stroke="#7B5CFF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+            <g class="lg-star" transform="translate(236 64)"><path d="M0-22C3-3 3-3 22 0 3 3 3 3 0 22-3 3-3 3-22 0-3-3-3-3 0-22Z" fill="#FFD43B" stroke="#0E0E0E" stroke-width="4" stroke-linejoin="round"/></g>
+            <text class="lg-word" x="160" y="256" text-anchor="middle" font-family="Lilita One, Arial Black, sans-serif" font-size="22" fill="#FFF6E0" stroke="#0E0E0E" stroke-width="1">CAUÊ GABRIEL</text>
+          </svg>
+        </div>
+        <div class="info">
+          <h3>Logo animado</h3>
+          <p>Um monograma que se desenha, estica e assenta com exagero de desenho animado. Clica pra rodar de novo.</p>
+        </div>
+      </article>
+      <article class="mcard w3 pop">
+        <div class="scr morph-scr" role="button" tabindex="0" aria-label="Forma que muda ao clicar">
+          <span class="mtag">clica pra trocar</span>
+          <svg viewBox="0 0 320 270" aria-hidden="true">
+            <g transform="translate(60 34)">
+              <path class="morph-shadow" d="M100 18 L122 74 L182 76 L134 112 L152 170 L100 136 L48 170 L66 112 L18 76 L78 74 Z" fill="#0E0E0E" transform="translate(8 8)"/>
+              <path class="morph" d="M100 18 L122 74 L182 76 L134 112 L152 170 L100 136 L48 170 L66 112 L18 76 L78 74 Z" fill="#FF4B3E" stroke="#0E0E0E" stroke-width="5" stroke-linejoin="round"/>
+            </g>
+            <path class="sign-draw" d="M24 240 C40 220 52 254 66 234 S90 218 98 240 S124 252 136 230 S168 224 180 242" fill="none" stroke="#0E0E0E" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="info">
+          <h3>Morph de formas</h3>
+          <p>Estrela, gota, coração e raio: o mesmo vetor mudando de forma com elasticidade.</p>
+        </div>
+      </article>
+      <article class="mcard w3 pop">
+        <div class="scr ball-scr">
+          <span class="mtag">squash &amp; stretch</span>
+          <svg viewBox="0 0 320 270" aria-label="Bolinha quicando com achatamento e esticamento">
+            <line x1="54" y1="44" x2="54" y2="210" stroke="#0E0E0E" stroke-width="3" stroke-linecap="round"/>
+            <g class="ticks"></g>
+            <text x="22" y="30" font-family="Space Mono, monospace" font-size="11" font-weight="700" fill="#0E0E0E">SPACING</text>
+            <line x1="20" y1="238" x2="300" y2="238" stroke="#0E0E0E" stroke-width="4" stroke-linecap="round"/>
+            <ellipse class="b-shadow" cx="190" cy="240" rx="34" ry="7" fill="#0E0E0E" opacity=".3"/>
+            <g class="ball" transform="translate(190 50)">
+              <circle cx="0" cy="0" r="26" fill="#7B5CFF" stroke="#0E0E0E" stroke-width="4"/>
+              <path d="M-14 -10 Q-8 -18 2 -18" stroke="#FFF6E0" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+        <div class="info">
+          <h3>Squash &amp; stretch</h3>
+          <p>O princípio mais famoso da animação: estica no ar, achata no chão. A régua mostra o espaçamento de cada quadro.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ transição íris: volta pra casa ============ -->
+<section class="iris-st" aria-hidden="true">
+  <div class="iris-stage">
+    <div class="mascot-slot iris-face" data-mascot="iris"></div>
+    <div class="iris-hole"></div>
+    <div class="iris-txt">Corta pra…</div>
+  </div>
+</section>
+
+<!-- ============ 4 · TRAMPOS ============ -->
+<section class="work" id="trampos" data-world="home">
+  <div class="wrap">
+    <span class="kicker">Trampos</span>
+    <h2 class="h2">Coisa que já está <span class="hl">no ar</span></h2>
+    <p class="sub">Projetos reais. E espaço guardado pro próximo.</p>
+    <div class="works">
+      <article class="proj pop">
+        <div class="thumb thumb-classe"><div class="tv"><div><b>Classe Studio</b><small>barbearia</small></div></div></div>
+        <div class="body">
+          <span class="meta">Site · GSAP</span>
+          <h3>Classe Studio</h3>
+          <p>Site de página única para uma barbearia, com animações em GSAP, câmera que passeia entre as seções e agendamento direto pelo WhatsApp.</p>
+          <a class="btn btn-acid small go" href="https://gabrielcaue83.github.io/classe-studio/" target="_blank" rel="noopener">Ver ao vivo ↗</a>
+        </div>
+      </article>
+      <article class="proj pop">
+        <div class="thumb thumb-self"><span>GSAP</span><span>Three.js</span><span>Motion</span></div>
+        <div class="body">
+          <span class="meta">Portfólio · 3 mundos</span>
+          <h3>Este site</h3>
+          <p>Três mundos, três ferramentas e eu em versão desenho te levando por todas as transições.</p>
+          <a class="btn btn-paper small go" href="#inicio">Viajar de novo ↑</a>
+        </div>
+      </article>
+      <article class="proj pop">
+        <div class="thumb thumb-next"><span class="q">?</span></div>
+        <div class="body">
+          <span class="meta">Próximo trampo</span>
+          <h3>A sua marca</h3>
+          <p>Esse espaço está guardado pro seu projeto.</p>
+          <a class="btn btn-mag small go" href="#contato">Vamos criar →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 · CONTATO ============ -->
+<section class="contact" id="contato" data-world="home">
+  <div class="wrap contact-grid">
+    <div>
+      <span class="kicker">Contato</span>
+      <h2 class="h2">Bora <span class="hl">criar?</span></h2>
+      <form class="panelf" id="form" novalidate>
+        <label class="field"><span>Seu nome</span>
+          <input id="f-nome" name="nome" autocomplete="name" placeholder="Como posso te chamar?" required>
+        </label>
+        <fieldset class="field">
+          <legend>O que você precisa</legend>
+          <div class="picks">
+            <button type="button" class="pick" aria-pressed="false">Site com GSAP</button>
+            <button type="button" class="pick" aria-pressed="false">Experiência 3D</button>
+            <button type="button" class="pick" aria-pressed="false">Motion / logo animado</button>
+            <button type="button" class="pick" aria-pressed="false">Identidade visual</button>
+          </div>
+        </fieldset>
+        <label class="field"><span>Conta rapidinho sobre o projeto</span>
+          <textarea id="f-msg" name="msg" rows="3" placeholder="Ex.: quero um site com animações pra minha loja"></textarea>
+        </label>
+        <div class="err" role="alert"></div>
+        <div class="formbtns">
+          <button class="btn btn-acid" type="submit" value="wa">Enviar no WhatsApp →</button>
+          <button class="btn btn-paper" type="submit" value="mail">Enviar por e-mail</button>
+        </div>
+      </form>
+      <div class="direct">
+        <a data-wa>WhatsApp <span data-wa-text></span></a>
+        <a data-ig="text"></a>
+        <a data-mail="text"></a>
+      </div>
+    </div>
+    <div class="contact-art">
+      <div class="bubble"><span>Me chama!<br>Bora tirar sua ideia do papel.</span></div>
+      <div class="mascot-slot" data-mascot="contato" title="Clica em mim!"></div>
+      <div class="sign">bora?</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 Cauê Gabriel · feito à mão com GSAP, Three.js e muito rabisco</span>
+    <span><a data-ig="text"></a> · <a data-mail="text"></a></span>
+    <a class="top-btn" href="#inicio">Voltar pro começo ↑</a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MotionPathPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/DrawSVGPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
+<script src="assets/js/main.js"></script>
+<!-- =========================================================
+     MUNDO 2 · THREE.JS — estúdio escuro, câmera que viaja por "shots"
+     ========================================================= -->
+<script type="module" src="assets/js/three-world.js"></script>
+</body>
 </html>

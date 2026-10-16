@@ -1,32 +1,31 @@
-# React + TypeScript + Vite
+# Cauê Gabriel — portfólio em mundos
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Um portfólio dividido em mundos, cada um feito com uma ferramenta:
 
-Currently, two official plugins are available:
+- **Casa** — zine cartoon (abertura, trampos, contato)
+- **Mundo 01 · GSAP** — laboratório neon, galeria horizontal com demos ao vivo
+- **Mundo 02 · Three.js** — estúdio de cinema, câmera que viaja por "shots"
+- **Mundo 03 · Motion** — desenho de sábado de manhã, animação vetorial
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Site estático: GSAP e Three.js vêm de CDN, sem etapa de build.
 
-## React Compiler
+## Estrutura
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+index.html                 marcação das seções
+assets/css/style.css       estilos de todos os mundos
+assets/js/main.js          GSAP: personagem, transições, demos, guia
+assets/js/three-world.js   cena 3D do mundo Three.js (módulo)
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Dados de contato: objeto `CONFIG` no topo de `assets/js/main.js`.
+
+## Rodar localmente
+
+```bash
+npx serve .
+# ou
+python3 -m http.server 8000
+```
+
+Publicado automaticamente no GitHub Pages a cada push na `main`.
