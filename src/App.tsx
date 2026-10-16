@@ -8,13 +8,17 @@ import { Hero } from './components/sections/Hero'
 import { MotionSection } from './components/sections/MotionSection'
 import { ThreeSection } from './components/sections/ThreeSection'
 import { CustomCursor } from './components/ui/CustomCursor'
+import { ErrorBoundary } from './components/ui/ErrorBoundary'
 import { Marquee } from './components/ui/Marquee'
 import { PanicOverlay } from './components/ui/PanicOverlay'
 
 export default function App() {
   return (
     <SmoothScroll>
-      <Experience />
+      {/* Sem WebGL (ou se o 3D falhar) o site continua, só sem o mundo 3D */}
+      <ErrorBoundary fallback={() => <div className="fixed inset-0 z-0 bg-pop-yellow" />}>
+        <Experience />
+      </ErrorBoundary>
       <CustomCursor />
 
       {/* Seções transparentes, sobrepostas ao canvas 3D fixo */}

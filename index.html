@@ -14,6 +14,22 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Se o JS principal nem carregar (arquivo 404, navegador antigo), mostra o motivo em vez de tela branca
+      window.addEventListener(
+        'error',
+        function (e) {
+          var root = document.getElementById('root')
+          if (!root || root.childNodes.length) return
+          var what = e.target && e.target.src ? 'Falha ao carregar ' + e.target.src : e.message
+          root.innerHTML =
+            '<pre style="margin:16px;padding:16px;border:4px solid #000;background:#ffe600;white-space:pre-wrap;font:16px monospace">Erro ao iniciar o site:\n' +
+            what +
+            '</pre>'
+        },
+        true,
+      )
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
