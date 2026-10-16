@@ -106,6 +106,10 @@
    <circle cx="119" cy="139" r="8" fill="#E8907C" opacity=".35"/><circle cx="181" cy="139" r="8" fill="#E8907C" opacity=".35"/>
    <path class="m-mouth" d="${MOUTH.smile}" fill="${K}"/>
    <text class="m-zzz" x="196" y="64" font-family="Lilita One, Arial Black, sans-serif" font-size="26" fill="${M}" stroke="${K}" stroke-width="1" opacity="0">Zz</text>
+   <g class="acc acc-gsap" opacity="0"><path d="M100 112 L114 112 M186 112 L200 112" stroke="${K}" stroke-width="4"/><rect x="113" y="101" width="74" height="26" rx="12" fill="#0AE448" fill-opacity=".42" stroke="${K}" stroke-width="4"/><path d="M120 108 L136 108" stroke="#D9F7E8" stroke-width="3.5" stroke-linecap="round"/></g>
+   <g class="acc acc-three" opacity="0"><path d="M114 108 L101 103 M186 108 L199 103" stroke="${K}" stroke-width="4" stroke-linecap="round"/><rect x="113" y="102" width="34" height="24" rx="5" fill="#FF3B3B" fill-opacity=".72" stroke="${K}" stroke-width="4"/><rect x="153" y="102" width="34" height="24" rx="5" fill="#22E4FF" fill-opacity=".72" stroke="${K}" stroke-width="4"/><path d="M147 110 L153 110" stroke="${K}" stroke-width="4"/></g>
+   <g class="acc acc-motion" opacity="0"><path d="M100 64 Q106 26 154 26 Q202 28 200 58 Q158 76 100 64 Z" fill="#FF4B3E" stroke="${K}" stroke-width="5" stroke-linejoin="round"/><path d="M106 60 Q152 68 194 56" stroke="#C93226" stroke-width="5" fill="none"/><path d="M152 27 L157 15" stroke="${K}" stroke-width="5" stroke-linecap="round"/></g>
+   <g class="m-poof" opacity="0">${[[150, 58, 28], [110, 82, 22], [190, 82, 22], [120, 132, 20], [180, 132, 20], [150, 154, 18]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${W}" stroke="${K}" stroke-width="4"/>`).join('')}</g>
   </g>
  </g>
 </g></svg>`;
@@ -153,7 +157,9 @@
     ride:  { armL: -40,  armR: -64,  foreL: -60, foreR: -40, legL: -72, legR: -82, upper: -4,  head: 4 },
     hoist: { armL: 160,  armR: -160, foreL: -14, foreR: 14,  legL: 4,   legR: -4,  upper: 4,   head: -10 },
     point: { armL: 96,   armR: -6,   foreL: -6,  foreR: 4,   legL: 0,   legR: 0,   upper: 6,   head: -8 },
-    hang:  { armL: 160,  armR: -160, foreL: -12, foreR: 12,   legL: 10,  legR: -10, upper: 0,   head: 0 }
+    hang:  { armL: 160,  armR: -160, foreL: -12, foreR: 12,   legL: 10,  legR: -10, upper: 0,   head: 0 },
+    surf:  { armL: 104,  armR: -96,  foreL: 24,  foreR: -18, legL: 18,  legR: -18, upper: -8,  head: 10 },
+    clap:  { armL: 128,  armR: -118, foreL: -58, foreR: 52,  legL: 8,   legR: -8,  upper: 4,   head: -8 }
   };
   function animateMascot(m, opt = {}) {
     const q = m.q, upper = q('.m-upper'), mroot = q('.m-root'), shadow = q('.m-shadow'), head = q('.m-head'), hair = q('.m-hair');
@@ -183,6 +189,19 @@
       gsap.to(head, { rotation: name === 'sleep' ? 12 : name === 'love' ? -6 : 0, duration: 0.5, ease: 'back.out(2)' });
       gsap.to(upper, { x: name === 'angry' ? 3 : 0, duration: 0.06, yoyo: name === 'angry', repeat: name === 'angry' ? 9 : 0 });
       m.sleeping = name === 'sleep';
+    };
+    // troca de roupa conforme o mundo, escondida atrás de uma nuvem de desenho animado
+    m.outfitName = 'none';
+    m.outfit = name => {
+      if (name === m.outfitName) return; m.outfitName = name;
+      const accs = m.qa('.acc'), next = q('.acc-' + name);
+      if (reduce) { gsap.set(accs, { opacity: 0 }); if (next) gsap.set(next, { opacity: 1 }); return; }
+      gsap.timeline()
+        .fromTo(q('.m-poof'), { opacity: 1, scale: 0.35, svgOrigin: '150 100' }, { scale: 1.35, duration: 0.5, ease: 'power2.out' })
+        .to(q('.m-poof'), { opacity: 0, duration: 0.18 }, 0.32)
+        .set(accs, { opacity: 0 }, 0.1)
+        .set(next || [], { opacity: 1 }, 0.1)
+        .fromTo(head, { scaleX: 1.12, scaleY: 0.86 }, { scaleX: 1, scaleY: 1, duration: 0.6, ease: 'elastic.out(1, .35)' }, 0.1);
     };
     m.pose('idle', 0);
     if (reduce) { m.look = () => {}; m.jump = () => {}; m.talk = () => {}; m.wave = () => {}; return m; }
@@ -395,9 +414,18 @@
         .to(hs_, { y: () => innerHeight * 1.1, rotation: 200, duration: 1.1, ease: 'power2.in' }, 5.7)
         .to([hm.parts.armL, hm.parts.armR], { rotation: i => (i ? -120 : 120), duration: 0.3 }, 5.7);
     }
+    // o chute: quadro de impacto, tela tremendo e linhas de velocidade enquanto o hero voa
+    it.fromTo('.impact', { opacity: 0 }, { opacity: 1, duration: 0.05 }, 4.98)
+      .fromTo('.impact span', { scale: 0, rotation: -24 }, { scale: 1, rotation: -6, duration: 0.14, ease: 'back.out(3)' }, 4.98)
+      .fromTo('.impact', { opacity: 1 }, { opacity: 0, duration: 0.22, immediateRender: false }, 5.3)
+      .fromTo('.t-intro .stage', { x: 0, y: 0 }, { keyframes: { x: [0, -16, 13, -9, 6, -2, 0], y: [0, 9, -7, 5, -3, 1, 0] }, duration: 0.34 }, 4.98)
+      .fromTo('.speedlines', { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' }, 5.15)
+      .fromTo('.speedlines', { opacity: 1 }, { opacity: 0, duration: 0.7, immediateRender: false }, 6.3);
     if (has('ScrambleTextPlugin')) it.fromTo('.g-title', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 1.4, ease: 'expo.out' }, 6.6)
       .to('.g-title', { scrambleText: { text: 'GSAP', chars: '01<>/{}=;#', revealDelay: 0.4 }, duration: 1.6 }, 6.6);
     else it.fromTo('.g-title', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 1.4, ease: 'expo.out' }, 6.6);
+    it.fromTo('.g-title', { textShadow: '-16px 0 0 rgba(255,46,147,.9), 16px 0 0 rgba(34,228,255,.9), 0 0 30px rgba(10,228,72,.55), 0 0 90px rgba(10,228,72,.25)', skewX: -14 },
+      { textShadow: '0px 0 0 rgba(255,46,147,0), 0px 0 0 rgba(34,228,255,0), 0 0 30px rgba(10,228,72,.55), 0 0 90px rgba(10,228,72,.25)', skewX: 0, duration: 1.3, ease: 'steps(9)' }, 6.6);
     it.fromTo('.g-sub', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, 7.6)
       .to('.tl-ui', { yPercent: 130, opacity: 0, duration: 1 }, 8.2)
       .to('.g-title-wrap', { yPercent: -8, duration: 1.8 }, 8.2);
@@ -429,12 +457,17 @@
         const ex = (s.progress * (1 + exitR) - 1) / exitR;
         setWorld(ex > 0.35 ? 'three' : 'gsap');
       } } });
+    // saída: a galeria tomba primeiro, depois anéis de dobra abrem o portal e um clarão corta pro túnel 3D
+    // (fromTo com início explícito: com invalidateOnRefresh, .to() regravaria o início no meio da animação)
+    const once = { immediateRender: false }, X = n => 1 + exitR * n;
     htl.to(track, { x: () => -dist(), ease: 'none', duration: 1 })
-      .to(track, { rotationX: 70, yPercent: 16, scale: 0.6, opacity: 0, transformOrigin: () => (track.scrollWidth - innerWidth / 2) + 'px 100%', ease: 'power2.in', duration: exitR })
-      .to('.hs-bg', { opacity: 0, duration: exitR * 0.7, ease: 'power1.in' }, '<' + exitR * 0.25)
-      .to('.hs-bar', { opacity: 0, duration: exitR * 0.2 }, '<')
-      .fromTo('.hs-portal', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: exitR * 0.45, ease: 'power2.out' }, '<' + exitR * 0.15)
-      .to('.hs-portal', { opacity: 0, scale: 1.6, duration: exitR * 0.25, ease: 'power2.in' }, '>');
+      .fromTo(track, { rotationX: 0, yPercent: 0, scale: 1, opacity: 1 }, { rotationX: 70, yPercent: 16, scale: 0.6, opacity: 0, transformOrigin: () => (track.scrollWidth - innerWidth / 2) + 'px 100%', ease: 'power2.in', duration: exitR * 0.42, ...once }, X(0))
+      .fromTo('.hs-bar', { opacity: 1 }, { opacity: 0, duration: exitR * 0.15, ...once }, X(0))
+      .fromTo('.hs-bg', { opacity: 1 }, { opacity: 0, duration: exitR * 0.45, ease: 'power1.in', ...once }, X(0.2))
+      .fromTo('.warp i', { scale: 0, opacity: 0 }, { keyframes: { scale: [0, 2.2, 7], opacity: [0, 1, 0] }, duration: exitR * 0.5, stagger: exitR * 0.08, ease: 'power2.in', ...once }, X(0.34))
+      .fromTo('.hs-portal', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: exitR * 0.2, ease: 'back.out(2)', ...once }, X(0.46))
+      .fromTo('.hs-portal', { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.8, duration: exitR * 0.16, ease: 'power2.in', ...once }, X(0.8))
+      .fromTo('.warp b', { opacity: 0 }, { keyframes: { opacity: [0, 0.95, 0] }, duration: exitR * 0.12, ...once }, X(0.88));
     if (htl.scrollTrigger) HS = { st: htl.scrollTrigger, exitR };
   }
 
@@ -556,25 +589,54 @@
      TRANSIÇÃO 3 · o lápis rabisca por cima do 3D
      ========================================================= */
   if (GS) {
-    const s1 = $('.scrib .s1'), s2 = $('.scrib .s2'), pencil = $('.pencil'), letters = $$('.m-title span');
+    const s1 = $('.scrib .s1'), s2 = $('.scrib .s2'), pencil = $('.pencil'), letters = $$('.m-title span'), mst = $('.m-stage');
+    const clapper = $('.clapper'), arm = $('.clap-arm', clapper), pow = $('.clap-pow');
+    const once = { immediateRender: false };
     const mtl = gsap.timeline({ defaults: { ease: 'none' },
       scrollTrigger: { trigger: '.m-intro', start: 'top top', end: 'bottom bottom', scrub: 0.6,
         onUpdate: s => setWorld(s.progress > 0.5 ? 'motion' : 'three') } });
+    // 1 · claquete: "corta!" antes do lápis entrar
+    gsap.set(clapper, { xPercent: -50, yPercent: -50 });
+    gsap.set(pow, { xPercent: -50 });
+    gsap.set(arm, { rotation: -32, svgOrigin: '14 60' });
+    mtl.fromTo(clapper, { scale: 0, rotation: -14, opacity: 0 }, { scale: 1, rotation: -4, opacity: 1, duration: 0.05, ease: 'back.out(2.5)' }, 0)
+      .fromTo(arm, { rotation: -32 }, { rotation: 0, duration: 0.025, ease: 'power4.in', ...once }, 0.07)
+      .fromTo(pow, { scale: 0, rotation: -20, opacity: 0 }, { scale: 1, rotation: 8, opacity: 1, duration: 0.03, ease: 'back.out(3)', ...once }, 0.095)
+      .fromTo(clapper, { x: 0 }, { keyframes: { x: [0, -10, 8, -5, 0] }, duration: 0.03, ...once }, 0.095)
+      .fromTo([clapper, pow], { scale: 1, opacity: 1 }, { scale: 0.2, opacity: 0, y: -80, duration: 0.04, ease: 'back.in(2)', ...once }, 0.14);
+    // 2 · o lápis rabisca a tela
     if (has('DrawSVGPlugin')) {
       gsap.set([s1, s2], { drawSVG: '0%' });
-      mtl.to(s1, { drawSVG: '100%', duration: 0.5, ease: 'power1.inOut' }, 0)
-        .to(s2, { drawSVG: '100%', duration: 0.5, ease: 'power1.inOut' }, 0.3);
+      mtl.fromTo(s1, { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.32, ease: 'power1.inOut', ...once }, 0.15)
+        .fromTo(s2, { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.32, ease: 'power1.inOut', ...once }, 0.28);
     } else {
       gsap.set([s1, s2], { opacity: 0 });
-      mtl.to(s1, { opacity: 1, duration: 0.4 }, 0).to(s2, { opacity: 1, duration: 0.4 }, 0.3);
+      mtl.to(s1, { opacity: 1, duration: 0.3 }, 0.15).to(s2, { opacity: 1, duration: 0.3 }, 0.28);
     }
     if (has('MotionPathPlugin')) {
-      mtl.set(pencil, { opacity: 1 }, 0.3)
-        .to(pencil, { motionPath: { path: s2, align: s2, alignOrigin: [0.5, 0.92] }, rotation: 30, duration: 0.5, ease: 'power1.inOut' }, 0.3)
-        .to(pencil, { opacity: 0, scale: 0.4, duration: 0.06 }, 0.8);
+      mtl.set(pencil, { opacity: 1 }, 0.28)
+        .to(pencil, { motionPath: { path: s2, align: s2, alignOrigin: [0.5, 0.92] }, rotation: 30, duration: 0.32, ease: 'power1.inOut' }, 0.28);
     }
-    mtl.fromTo(letters, { yPercent: -260, rotation: () => R(-40, 40), opacity: 0 }, { yPercent: 0, rotation: 0, opacity: 1, stagger: 0.025, duration: 0.14, ease: 'bounce.out' }, 0.8)
-      .fromTo('.m-sub', { scale: 0, opacity: 0, rotation: -12 }, { scale: 1, opacity: 1, rotation: -2, duration: 0.08, ease: 'back.out(3)' }, 0.93);
+    // 3 · eu escrevo MOTION: cada letra aparece onde a ponta do lápis passa
+    const write = { p: 0 }, WRITE_SCALE = 0.68;
+    const drawLetters = () => {
+      const n = letters.length, f = write.p * n;
+      letters.forEach((l, i) => {
+        const k = clamp(0, 1, f - i);
+        gsap.set(l, { opacity: k > 0 ? 1 : 0, clipPath: 'inset(-30% ' + ((1 - k) * 125 - 25).toFixed(1) + '% -30% -25%)', scale: k > 0 && k < 1 ? 1.08 : 1 });
+      });
+      if (write.p <= 0 || write.p >= 1 || !has('MotionPathPlugin')) return;
+      const i = Math.min(n - 1, Math.floor(f)), k = f - i, r = letters[i].getBoundingClientRect(), sr = mst.getBoundingClientRect();
+      const tx = r.left - sr.left + r.width * (0.08 + k * 0.86), ty = r.top - sr.top + r.height * (0.6 - Math.sin(k * Math.PI * 3) * 0.2);
+      // o lápis é um <svg> (sem offsetWidth): tamanho vem da largura CSS e da proporção 60x200 do desenho.
+      // Encolhe em volta da ponta pra eu (montado nele) continuar dentro da tela enquanto escrevo
+      const pw = parseFloat(getComputedStyle(pencil).width), ph = pw * 200 / 60;
+      gsap.set(pencil, { x: tx - pw * 0.5, y: ty - ph * 0.92, scale: WRITE_SCALE, rotation: 16 + Math.sin(k * Math.PI * 6) * 7 });
+    };
+    gsap.set(letters, { opacity: 0 });
+    mtl.fromTo(write, { p: 0 }, { p: 1, duration: 0.3, onUpdate: drawLetters, ...once }, 0.62);
+    if (has('MotionPathPlugin')) mtl.fromTo(pencil, { opacity: 1, scale: WRITE_SCALE }, { opacity: 0, scale: 0.3, duration: 0.03, ...once }, 0.93);
+    mtl.fromTo('.m-sub', { scale: 0, opacity: 0, rotation: -12 }, { scale: 1, opacity: 1, rotation: -2, duration: 0.06, ease: 'back.out(3)' }, 0.95);
   }
 
   /* =========================================================
@@ -701,14 +763,24 @@
         setWorld(h ? 'home' : 'motion');
         if (h !== home) { home = h; stage.classList.toggle('home', h); txt.textContent = h ? '…o que já está no ar!' : 'Corta pra…'; im.mood(h ? 'grin' : 'wow'); }
       } } });
-    itl.fromTo(hole, { '--r': '120vmax' }, { '--r': '0vmax', duration: 0.46, ease: 'power2.in' }, 0)
-      .to(hole, { '--r': '120vmax', duration: 0.46, ease: 'power2.out' }, 0.54)
+    // fecha em etapas como nos desenhos antigos: para no meu rosto, eu pisco e aceno, e só então fecha de vez
+    const once = { immediateRender: false };
+    const big = () => Math.hypot(innerWidth, innerHeight) + 'px', face = () => Math.min(innerWidth, innerHeight) * 0.22 + 'px';
+    itl.fromTo(hole, { '--r': big }, { '--r': face, duration: 0.3, ease: 'power3.inOut' }, 0)
+      .fromTo(hole, { '--r': face }, { '--r': '0px', duration: 0.05, ease: 'back.in(3)', ...once }, 0.45)
+      .fromTo(hole, { '--r': '0px' }, { '--r': big, duration: 0.46, ease: 'power2.out', ...once }, 0.54)
       .fromTo(txt, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.12 }, 0.08)
-      .to(txt, { opacity: 0, duration: 0.06 }, 0.38)
-      .to(txt, { opacity: 1, duration: 0.08 }, 0.58)
-      .to(txt, { opacity: 0, y: -20, duration: 0.1 }, 0.88)
-      .fromTo(im.svg, { scale: 0.9 }, { scale: 1.12, duration: 0.46, ease: 'power1.in' }, 0)
-      .to(im.svg, { scale: 0.9, duration: 0.46, ease: 'power1.out' }, 0.54);
+      .fromTo(txt, { opacity: 1 }, { opacity: 0, duration: 0.06, ...once }, 0.38)
+      .fromTo(txt, { opacity: 0 }, { opacity: 1, duration: 0.08, ...once }, 0.58)
+      .fromTo(txt, { opacity: 1, y: 0 }, { opacity: 0, y: -20, duration: 0.1, ...once }, 0.88)
+      .fromTo(im.svg, { scale: 0.9 }, { scale: 1.12, duration: 0.3, ease: 'power1.in' }, 0)
+      .fromTo(im.svg, { scale: 1.12 }, { scale: 0.9, duration: 0.46, ease: 'power1.out', ...once }, 0.54);
+    if (im.parts) {
+      itl.fromTo(im.parts.armL, { rotation: 6 }, { rotation: 150, duration: 0.04, ease: 'back.out(2)', ...once }, 0.31)
+        .fromTo(im.parts.foreL, { rotation: -4 }, { keyframes: { rotation: [-4, 46, 10, 46, 10, 46, 18] }, duration: 0.1, ...once }, 0.33)
+        .fromTo(im.parts.armL, { rotation: 150 }, { rotation: 6, duration: 0.03, ...once }, 0.44)
+        .fromTo(im.qa('.m-eyeR'), { scaleY: 1 }, { keyframes: { scaleY: [1, 0.08, 0.08, 1] }, transformOrigin: '50% 50%', duration: 0.05, ...once }, 0.37);
+    }
   }
 
   /* =========================================================
@@ -729,29 +801,33 @@
 
   /* =========================================================
      O GUIA: eu atravesso o site junto com quem visita
-     puxo a galeria do GSAP, mergulho no túnel do 3D, monto no lápis,
-     aponto os trampos e iço a seção de contato
+     puxo a galeria do GSAP, surfo no túnel do 3D, bato a claquete, escrevo
+     MOTION montado no lápis, aponto os trampos e iço a seção de contato.
+     Em cada mundo troco de roupa: viseira neon, óculos 3D e boina de pintor
      ========================================================= */
   if (GS && mascots.guide && mascots.guide.pose) {
-    const gm = mascots.guide, gel = $('.guide'), ropeH = $('.rope-h', gel), ropeV = $('.rope-v', gel);
-    const pencil = $('.pencil'), three = $('#threejs'), mIntro = $('.m-intro'), work = $('#trampos'), cont = $('#contato');
+    const gm = mascots.guide, gel = $('.guide'), ropeH = $('.rope-h', gel), ropeV = $('.rope-v', gel), board = $('.board', gel);
+    const pencil = $('.pencil'), clapper = $('.clapper'), three = $('#threejs'), mIntro = $('.m-intro'), work = $('#trampos'), cont = $('#contato');
     const op = gsap.quickTo(gel, 'opacity', { duration: 0.25 });
     const lerp = (a, b, t) => a + (b - a) * t;
     let phase = '', hoistTl = null;
-    const POSE_OF = { pull: 'pull', dive: 'fly', fly: 'fly', ride: 'ride', point: 'point', hoist: 'hoist', off: 'idle' };
+    const POSE_OF = { pull: 'pull', dive: 'fly', surf: 'surf', clap: 'clap', ride: 'ride', point: 'point', hoist: 'hoist', off: 'idle' };
+    const OUTFIT_OF = { pull: 'gsap', dive: 'three', surf: 'three', clap: 'three', ride: 'motion' };
     function setPhase(ph) {
       if (ph === phase) return;
       const prev = phase; phase = ph;
       gm.pose(POSE_OF[ph] || 'idle', ph === 'dive' ? 0.3 : 0.45);
       gsap.to(ropeH, { opacity: ph === 'pull' ? 1 : 0, scaleX: ph === 'pull' ? 1 : 0.2, duration: 0.25 });
       gsap.to(ropeV, { opacity: ph === 'hoist' ? 1 : 0, duration: 0.2 });
+      gsap.to(board, { opacity: ph === 'surf' ? 1 : 0, scale: ph === 'surf' ? 1 : 0.3, duration: ph === 'surf' ? 0.4 : 0.2, ease: ph === 'surf' ? 'back.out(2.5)' : 'power1.in' });
+      if (ph !== 'off') gm.outfit(OUTFIT_OF[ph] || 'none');
       if (ph !== 'pull') gm.walkTl.pause();
       if (hoistTl) { hoistTl.kill(); hoistTl = null; }
       if (ph === 'hoist') hoistTl = gsap.timeline({ repeat: -1, delay: 0.45 })
         .to(gm.parts.armL, { rotation: 140, duration: 0.25, ease: 'power2.in' }).to(gm.parts.armL, { rotation: 162, duration: 0.25 })
         .to(gm.parts.armR, { rotation: -140, duration: 0.25, ease: 'power2.in' }, 0.25).to(gm.parts.armR, { rotation: -162, duration: 0.25 });
-      gm.lookDir = ph === 'pull' ? [-4, 0] : ph === 'point' ? [-4, 1] : ph === 'hoist' ? [0, -4] : ph === 'ride' ? [3, 2] : null;
-      gm.mood(ph === 'pull' || ph === 'hoist' ? 'angry' : ph === 'dive' || ph === 'fly' ? 'wow' : 'grin', 0.2);
+      gm.lookDir = ph === 'pull' ? [-4, 0] : ph === 'point' ? [-4, 1] : ph === 'hoist' ? [0, -4] : ph === 'ride' ? [3, 2] : ph === 'clap' ? [4, -1] : ph === 'surf' ? [0, -3] : null;
+      gm.mood(ph === 'pull' || ph === 'hoist' ? 'angry' : ph === 'dive' || ph === 'clap' ? 'wow' : 'grin', 0.2);
     }
     gsap.ticker.add(() => {
       const vw = innerWidth, vh = innerHeight, gw = gel.offsetWidth, gh = gw * 500 / 300;
@@ -775,8 +851,12 @@
         }
       } else if (tp > 0 && tp < 0.12) {
         const k = tp / 0.12;
-        ph = 'fly'; cx = mid.x + Math.sin(k * 9) * 12; cy = mid.y - k * vh * 0.04; s = 0.5 * (1 - k) ** 1.6; rot = -20 + Math.sin(k * 6) * 12;
-      } else if (mp > 0.3 && mp < 0.8 && pencil && +getComputedStyle(pencil).opacity > 0.5) {
+        // surfando pelos anéis: faz curvas pros lados e vai sumindo no fundo do túnel
+        ph = 'surf'; cx = mid.x + Math.sin(k * 7) * vw * 0.13; cy = mid.y + vh * 0.08 - k * vh * 0.1 + Math.sin(k * 15) * 8; s = 0.55 * (1 - k) ** 1.3; rot = -Math.cos(k * 7) * 16;
+      } else if (mp > 0 && mp < 0.15 && clapper && +getComputedStyle(clapper).opacity > 0.3) {
+        const kr = clapper.getBoundingClientRect();
+        ph = 'clap'; s = MOBILE() ? 0.62 : 0.85; cx = kr.left - gw * s * 0.18; cy = kr.top + kr.height * 0.62; rot = -4;
+      } else if (mp > 0.2 && mp < 0.98 && pencil && +getComputedStyle(pencil).opacity > 0.5) {
         const pr = pencil.getBoundingClientRect();
         ph = 'ride'; s = 0.62; cx = pr.left + pr.width / 2; cy = pr.top + pr.height * 0.25 - 0.16 * gh * s; rot = gsap.getProperty(pencil, 'rotation') * 0.4;
       } else if (wr.top < vh * 0.5 && wr.bottom > vh * 0.55 && cr.top > vh * 0.98) {

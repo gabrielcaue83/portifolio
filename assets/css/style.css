@@ -142,6 +142,7 @@ html.gs .t-intro{background:var(--g-bg)}
 html:not(.gs) .hang-slot{display:none}
 .guide{position:fixed;left:0;top:0;width:clamp(72px,8.6vw,128px);z-index:70;pointer-events:none;opacity:0;will-change:transform}
 .guide .mascot-slot{width:100%;cursor:default}
+.board{position:absolute;left:-14%;width:128%;top:92%;opacity:0;overflow:visible;filter:drop-shadow(0 6px 10px rgba(34,228,255,.75))}
 .rope{position:absolute;z-index:-1;opacity:0;border:2px solid var(--ink);border-radius:5px;background:repeating-linear-gradient(-55deg,#D8B06A 0 5px,#9A7440 5px 9px)}
 .rope-h{left:60%;top:43%;width:150vw;height:9px;transform-origin:0 50%}
 .rope-v{left:calc(50% - 5px);bottom:84%;width:9px;height:120vh}
@@ -173,6 +174,14 @@ html:not(.gs) .hang-slot{display:none}
 .g-sub{font-family:var(--f-code);font-size:clamp(13px,1.3vw,16px);color:var(--g-dim);margin-top:14px;opacity:0;max-width:52ch}
 .g-sub b{color:var(--g-txt);font-weight:700}
 
+/* chute no hero: quadro de impacto e linhas de velocidade */
+.impact{position:absolute;inset:0;z-index:7;pointer-events:none;opacity:0;background:radial-gradient(circle at 30% 58%,rgba(255,255,255,.95) 0 14%,rgba(255,255,255,0) 46%)}
+.impact span{position:absolute;left:clamp(10px,20%,320px);top:44%;font-family:var(--f-comic);font-size:clamp(54px,9vw,140px);line-height:1;color:var(--acid);-webkit-text-stroke:4px var(--ink);text-shadow:7px 7px 0 var(--ink);padding:.5em .55em;background:var(--mag);
+  clip-path:polygon(50% 0,61% 22%,85% 8%,78% 34%,100% 42%,80% 58%,94% 82%,66% 74%,56% 100%,44% 78%,18% 94%,24% 66%,0 56%,20% 40%,8% 14%,36% 24%)}
+.speedlines{position:absolute;inset:-25%;z-index:3;pointer-events:none;opacity:0;
+  background:repeating-conic-gradient(from 0deg at 50% 50%,transparent 0 3.2deg,rgba(10,228,72,.42) 3.2deg 4deg,transparent 4deg 7deg,rgba(34,228,255,.3) 7deg 7.5deg);
+  mask-image:radial-gradient(circle at 50% 50%,transparent 16%,#000 46%);-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent 16%,#000 46%)}
+
 /* =================== 1 · MUNDO GSAP =================== */
 .hs{height:100vh;height:100svh;overflow:hidden;position:relative;perspective:1300px;color:var(--g-txt)}
 .hs-bg{position:absolute;inset:0;background:var(--g-bg)}
@@ -198,6 +207,14 @@ html:not(.gs) .hang-slot{display:none}
 .hs-portal{position:absolute;inset:0;display:grid;place-items:center;z-index:4;pointer-events:none;font-family:var(--f-code);color:var(--t-txt);text-align:center;opacity:0}
 .hs-portal b{display:block;font-family:var(--f-serif);font-style:italic;font-weight:400;font-size:clamp(40px,7vw,110px);line-height:1;color:var(--t-txt)}
 .hs-portal span{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--t-dim)}
+
+/* portal pro 3D: anéis de dobra e clarão */
+.warp{position:absolute;inset:0;z-index:4;pointer-events:none;display:grid;place-items:center;overflow:hidden}
+.warp i{position:absolute;width:24vmin;height:24vmin;border-radius:50%;border:2px solid var(--g-cyan);box-shadow:0 0 28px var(--g-cyan),inset 0 0 22px rgba(165,133,255,.7);opacity:0}
+.warp i:nth-child(2){border-color:var(--g-vio);box-shadow:0 0 28px var(--g-vio),inset 0 0 22px rgba(34,228,255,.6)}
+.warp i:nth-child(3){border-color:var(--t-gold);box-shadow:0 0 28px var(--t-gold)}
+.warp b{position:absolute;inset:0;background:#fff;opacity:0}
+html:not(.gs) .warp{display:none}
 
 /* painel: easing */
 .ease-demo{display:grid;grid-template-rows:minmax(0,1fr) auto;padding:18px}
@@ -272,6 +289,10 @@ html.t-fail .t-load{display:grid}
 .scrib{position:absolute;inset:0;width:100%;height:100%}
 .scrib path{fill:none;stroke-linecap:round;stroke-linejoin:round}
 .pencil{position:absolute;left:0;top:0;width:clamp(70px,9vw,120px);z-index:3;pointer-events:none;opacity:0}
+.clapper{position:absolute;left:50%;top:48%;width:min(340px,64vw);z-index:5;opacity:0;overflow:visible;filter:drop-shadow(8px 8px 0 rgba(0,0,0,.55))}
+.clap-pow{position:absolute;left:50%;top:22%;z-index:6;font-family:var(--f-comic);font-size:clamp(34px,5vw,64px);line-height:1;padding:.55em .5em;background:var(--m-yel);color:var(--ink);opacity:0;pointer-events:none;
+  clip-path:polygon(50% 0,61% 22%,85% 8%,78% 34%,100% 42%,80% 58%,94% 82%,66% 74%,56% 100%,44% 78%,18% 94%,24% 66%,0 56%,20% 40%,8% 14%,36% 24%)}
+html:not(.gs) .clapper,html:not(.gs) .clap-pow{display:none}
 .m-title-wrap{position:absolute;inset:0;display:grid;place-items:center;align-content:center;text-align:center;z-index:4;pointer-events:none;padding-inline:var(--gut)}
 .m-title{font-family:var(--f-comic);font-size:clamp(78px,17vw,250px);line-height:.9;color:var(--m-yel);-webkit-text-stroke:4px var(--ink);text-shadow:8px 8px 0 var(--ink);display:flex}
 .m-title span{display:inline-block;opacity:0}

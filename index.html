@@ -31,7 +31,7 @@ setTimeout(function(){h.classList.remove('preload')},6500);})();
 <div id="iris" aria-hidden="true"><div class="logo-pop">CG</div></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="cursor" aria-hidden="true"></div>
-<div class="guide" aria-hidden="true"><div class="rope rope-h"></div><div class="rope rope-v"></div><div class="mascot-slot" data-mascot="guide"></div></div>
+<div class="guide" aria-hidden="true"><div class="rope rope-h"></div><div class="rope rope-v"></div><div class="mascot-slot" data-mascot="guide"></div><svg class="board" viewBox="0 0 240 60"><path d="M12 30 Q20 12 70 10 L190 10 Q232 12 230 30 Q232 48 190 50 L70 50 Q20 48 12 30 Z" fill="#22E4FF" stroke="#0E0E0E" stroke-width="6"/><path d="M40 30 L214 30" stroke="#FFD43B" stroke-width="8" stroke-linecap="round"/><path d="M60 21 L200 21" stroke="#F2EEE3" stroke-width="4" stroke-linecap="round" opacity=".7"/></svg></div>
 <canvas id="webgl" aria-label="Cena 3D feita com Three.js"></canvas>
 
 <header class="nav">
@@ -108,6 +108,8 @@ setTimeout(function(){h.classList.remove('preload')},6500);})();
       <p class="g-sub"><b>Mundo 01.</b> A biblioteca de animação que move a web. Aqui ela controla tudo. Continue rolando →</p>
     </div>
 
+    <div class="speedlines" aria-hidden="true"></div>
+    <div class="impact" aria-hidden="true"><span>POW!</span></div>
     <div class="scroll-hint" aria-hidden="true">role pra entrar <i></i></div>
   </div>
 </section>
@@ -224,6 +226,7 @@ setTimeout(function(){h.classList.remove('preload')},6500);})();
 
   </div>
   <div class="hs-bar" aria-hidden="true"><div><i></i>easing</div><div><i></i>stagger</div><div><i></i>flip</div><div><i></i>texto</div><div><i></i>trilhas</div></div>
+  <div class="warp" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
   <div class="hs-portal" aria-hidden="true"><div><span>saindo do plano</span><b>entrando no 3D</b></div></div>
 </section>
 
@@ -280,6 +283,17 @@ setTimeout(function(){h.classList.remove('preload')},6500);})();
         <path d="M24 160 L30 176 L36 160 Z" fill="#0E0E0E"/>
       </g>
     </svg>
+    <svg class="clapper" viewBox="0 0 220 200" aria-hidden="true">
+      <defs><clipPath id="clap-top"><rect x="13" y="37" width="194" height="20" rx="4"/></clipPath><clipPath id="clap-band"><rect x="13" y="65" width="194" height="20"/></clipPath></defs>
+      <rect x="10" y="62" width="200" height="128" rx="10" fill="#151515" stroke="#0E0E0E" stroke-width="6"/>
+      <g fill="#F2EEE3" clip-path="url(#clap-band)"><polygon points="26,65 41,65 29,85 14,85"/><polygon points="56,65 71,65 59,85 44,85"/><polygon points="86,65 101,65 89,85 74,85"/><polygon points="116,65 131,65 119,85 104,85"/><polygon points="146,65 161,65 149,85 134,85"/><polygon points="176,65 191,65 179,85 164,85"/><polygon points="206,65 221,65 209,85 194,85"/></g>
+      <path d="M10 118 L210 118 M110 118 L110 190" stroke="#F2EEE3" stroke-width="3"/>
+      <text x="24" y="110" fill="#FFD43B" font-family="Lilita One, Arial Black, sans-serif" font-size="19">MUNDO 03 · MOTION</text>
+      <text x="24" y="160" fill="#F2EEE3" font-family="Space Mono, monospace" font-size="15" font-weight="700">CENA 1</text>
+      <text x="124" y="160" fill="#F2EEE3" font-family="Space Mono, monospace" font-size="15" font-weight="700">TAKE 1</text>
+      <g class="clap-arm"><rect x="10" y="34" width="200" height="26" rx="6" fill="#151515" stroke="#0E0E0E" stroke-width="6"/><g fill="#F2EEE3" clip-path="url(#clap-top)"><polygon points="26,37 41,37 29,57 14,57"/><polygon points="56,37 71,37 59,57 44,57"/><polygon points="86,37 101,37 89,57 74,57"/><polygon points="116,37 131,37 119,57 104,57"/><polygon points="146,37 161,37 149,57 134,57"/><polygon points="176,37 191,37 179,57 164,57"/><polygon points="206,37 221,37 209,57 194,57"/></g></g>
+    </svg>
+    <div class="clap-pow" aria-hidden="true">CLAP!</div>
     <div class="m-title-wrap">
       <div class="m-title"><span>M</span><span>O</span><span>T</span><span>I</span><span>O</span><span>N</span></div>
       <div class="m-sub">Mundo 03 · animação vetorial</div>
