@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { triggerPanic } from '../../lib/panic'
 import { audio } from '../audio/audioManager'
 
-/** Botão vermelho com tampa de segurança: primeiro levanta a tampa, depois... não aperte. */
+/** Easter egg: botão vermelho com tampa de segurança. Primeiro levanta a tampa, depois... não aperte. */
 export function PanicButton() {
   const root = useRef<HTMLDivElement>(null)
   const cover = useRef<HTMLButtonElement>(null)
@@ -38,24 +38,23 @@ export function PanicButton() {
   }
 
   return (
-    <div ref={root} className="cartoon-box space-y-4 rounded-3xl bg-white p-6 text-center">
-      <p className="font-display text-xl uppercase">Em caso de emergência</p>
-
-      <div className="relative mx-auto grid size-48 place-items-center rounded-2xl border-4 border-black bg-[repeating-linear-gradient(-45deg,#ffe600_0_14px,#000_14px_28px)] [perspective:600px]">
-        <div className="grid size-36 place-items-center rounded-full border-4 border-black bg-neutral-300">
+    <div
+      ref={root}
+      className="flex items-center gap-4 rounded-2xl border-[3px] border-ink bg-paper p-3 pr-5 shadow-cartoon"
+    >
+      <div className="relative grid size-28 shrink-0 place-items-center rounded-xl border-[3px] border-ink bg-[repeating-linear-gradient(-45deg,#B6FF3B_0_10px,#0E0E0E_10px_20px)] [perspective:500px]">
+        <div className="grid size-20 place-items-center rounded-full border-[3px] border-ink bg-paper2">
           <button
             ref={button}
             type="button"
             onClick={press}
             disabled={!open}
-            data-cursor={open ? 'não!' : ''}
             aria-label="Botão do pânico. Não aperte."
-            className="size-28 rounded-full border-4 border-black bg-pop-red font-display text-lg text-white uppercase shadow-[inset_0_-10px_0_0_rgba(0,0,0,0.3)] transition-transform [-webkit-text-stroke:1px_black] active:translate-y-1"
+            className="size-16 rounded-full border-[3px] border-ink bg-mag font-comic text-[11px] text-paper uppercase shadow-[inset_0_-7px_0_0_rgba(0,0,0,0.3)] active:translate-y-0.5"
           >
             Pânico
           </button>
         </div>
-
         {/* Tampa de acrílico: gira para cima na dobradiça superior */}
         <button
           ref={cover}
@@ -63,15 +62,16 @@ export function PanicButton() {
           onClick={openCover}
           disabled={open}
           aria-label="Levantar a tampa de segurança"
-          data-cursor="abrir?"
           style={{ transformOrigin: '50% 0%' }}
-          className="absolute inset-2 rounded-xl border-4 border-black bg-pop-cyan/35 shadow-[inset_6px_6px_0_rgba(255,255,255,0.6)] disabled:pointer-events-none"
+          className="absolute inset-1.5 rounded-lg border-[3px] border-ink bg-paper/35 shadow-[inset_5px_5px_0_rgba(255,255,255,0.6)] disabled:pointer-events-none"
         />
       </div>
-
-      <p className="font-bold" aria-live="polite">
-        {open ? 'Tem certeza? 👀' : 'Levante a tampa… se tiver coragem.'}
-      </p>
+      <div>
+        <p className="font-mono text-xs font-bold tracking-widest uppercase">Em caso de emergência</p>
+        <p className="font-comic text-sm leading-tight" aria-live="polite">
+          {open ? 'Tem certeza? 👀' : 'Levanta a tampa… se tiver coragem.'}
+        </p>
+      </div>
     </div>
   )
 }

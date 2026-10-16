@@ -1,193 +1,157 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { Draggable } from 'gsap/Draggable'
-import { InertiaPlugin } from 'gsap/InertiaPlugin'
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin'
 import { SplitText } from 'gsap/SplitText'
-import { ArrowDown, Hand, Siren } from 'lucide-react'
 import { useRef } from 'react'
-import { useLenis } from '../../hooks/useLenis'
-import { audio } from '../audio/audioManager'
-import { Button } from '../ui/Button'
+import { waLink } from '../../lib/config'
+import { INTRO_EVENT, introState } from '../../lib/intro'
+import { STAR_PATH } from '../../lib/shapes'
+import { Mascot, type MascotHandle } from '../ui/Mascot'
 
-gsap.registerPlugin(Draggable, InertiaPlugin, SplitText)
+gsap.registerPlugin(SplitText, DrawSVGPlugin)
 
-const POP = ['#ff3ea5', '#00e5ff', '#39ff14', '#ff7a00', '#9b5cff']
-
-/** Pontos de uma explosão de quadrinhos ("starburst"). */
-const burst = Array.from({ length: 28 }, (_, i) => {
-  const r = i % 2 ? 46 : 70
-  const a = (i / 28) * Math.PI * 2
-  return `${75 + Math.cos(a) * r},${75 + Math.sin(a) * r}`
-}).join(' ')
+const PHRASES = [
+  'E aí! Bora criar?',
+  'Eu sou o Chiado, mascote do Cauê.',
+  'Passa o mouse no nome ali do lado!',
+  'Clica em mim pra eu pular!',
+  'Rola a página e entra na minha TV.',
+]
 
 export function Hero() {
   const root = useRef<HTMLElement>(null)
-  const content = useRef<HTMLDivElement>(null)
-  const title = useRef<HTMLHeadingElement>(null)
-  const lenis = useLenis()
+  const mascot = useRef<MascotHandle>(null)
+  const bubble = useRef<HTMLSpanElement>(null)
 
   useGSAP(
     (_, contextSafe) => {
-      if (!title.current || !root.current || !contextSafe) return
-      const split = SplitText.create(title.current, { type: 'words,chars' })
+      if (!contextSafe) return
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+      const split = SplitText.create('.h1 .line', { type: 'chars', charsClass: 'ch' })
 
-      gsap
-        .timeline()
-        .from(split.chars, {
-          yPercent: 120,
-          rotate: 'random(-30, 30)',
-          autoAlpha: 0,
-          stagger: 0.025,
-          duration: 0.6,
-          ease: 'back.out(2.5)',
-        })
-        .from('[data-pop]', { scale: 0, rotate: -12, stagger: 0.1, duration: 0.5, ease: 'back.out(2.5)' }, 0.3)
-        .from(
-          '[data-sticker]',
-          { scale: 0, rotate: 'random(-90, 90)', stagger: 0.12, duration: 0.8, ease: 'elastic.out(1, 0.5)' },
-          0.6,
-        )
+      // Balão com digitação e boca falando
+      const startBubble = contextSafe(() => {
+        if (reduce) return
+        let i = 0
+        const next = () => {
+          const txt = PHRASES[i++ % PHRASES.length]
+          const o = { n: 0 }
+          mascot.current?.talk(true)
+          gsap
+            .timeline({ onComplete: () => void gsap.delayedCall(2.4, next) })
+            .to(o, {
+              n: txt.length,
+              duration: txt.length * 0.045,
+              ease: 'none',
+              onUpdate: () => {
+                if (bubble.current) bubble.current.textContent = txt.slice(0, Math.round(o.n))
+              },
+            })
+            .call(() => mascot.current?.talk(false))
+        }
+        next()
+      })
 
-      // Cada letra pula e troca de cor ao passar o mouse
-      const jump = contextSafe((char: Element) => {
+      const intro = contextSafe(() => {
+        if (reduce) return
         gsap
-          .timeline({ overwrite: 'auto' })
-          .to(char, {
-            y: -26,
-            rotate: gsap.utils.random(-18, 18),
-            color: gsap.utils.random(POP),
-            duration: 0.15,
-            ease: 'power2.out',
+          .timeline({ defaults: { ease: 'back.out(2)' } })
+          .from(split.chars, {
+            yPercent: -170,
+            rotation: () => gsap.utils.random(-50, 50),
+            opacity: 0,
+            duration: 1,
+            ease: 'bounce.out',
+            stagger: 0.045,
           })
-          .to(char, { y: 0, rotate: 0, duration: 0.7, ease: 'elastic.out(1, 0.35)' })
-          .to(char, { color: '#ffffff', duration: 0.4 }, '+=0.6')
-      })
-      split.chars.forEach((char) => char.addEventListener('mouseenter', () => jump(char)))
-
-      // Adesivos arrastáveis, com inércia ao soltar
-      const stickers = Draggable.create('[data-sticker]', {
-        type: 'x,y',
-        bounds: root.current,
-        inertia: true,
-        edgeResistance: 0.65,
-        onPress(this: Draggable) {
-          gsap.to(this.target, { scale: 1.12, rotate: '+=8', duration: 0.2 })
-        },
-        onDragStart: () => audio.play('boing'),
-        onRelease(this: Draggable) {
-          gsap.to(this.target, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.4)' })
-        },
+          .from('.tag', { scale: 0, rotation: -40, duration: 0.5 }, 0.1)
+          .from('.lead, .ctas > *', { y: 40, opacity: 0, stagger: 0.08, duration: 0.6 }, 0.4)
+          .from('.burst', { scale: 0, duration: 1.1, ease: 'elastic.out(1, .5)' }, 0.2)
+          .from('.mascot', { yPercent: 130, duration: 0.8, ease: 'back.out(1.4)' }, 0.5)
+          .from('.spark', { scale: 0, rotation: 180, stagger: 0.1, duration: 0.6 }, 0.9)
+          .from('.bubble', { scale: 0, transformOrigin: '10% 100%', duration: 0.5, ease: 'back.out(3)', onComplete: startBubble }, 1.2)
+          .from('.hero-sq path', { drawSVG: 0, duration: 1, ease: 'power2.inOut' }, 1)
       })
 
-      gsap.to('[data-spin]', { rotate: 360, duration: 12, repeat: -1, ease: 'none' })
+      if (introState.opened) intro()
+      else addEventListener(INTRO_EVENT, intro, { once: true })
 
-      // Conteúdo sobe e some enquanto o hero sai da tela (scrub = preso ao scroll)
-      gsap.to(content.current, {
-        yPercent: -40,
-        autoAlpha: 0,
-        ease: 'none',
-        scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
-      })
+      if (!reduce) {
+        // Letras de borracha no nome
+        split.chars.forEach((c) =>
+          c.addEventListener('pointerenter', () =>
+            gsap.fromTo(
+              c,
+              { y: 0, rotation: 0, scaleY: 1 },
+              {
+                keyframes: { y: [0, -26, 0], rotation: [0, gsap.utils.random(-16, 16), 0], scaleY: [1, 1.18, 0.86, 1] },
+                duration: 0.55,
+                ease: 'power1.inOut',
+                overwrite: true,
+              },
+            ),
+          ),
+        )
+        gsap.to('.spark', { scale: 0.6, rotation: 90, duration: 0.8, ease: 'sine.inOut', yoyo: true, repeat: -1, stagger: 0.25 })
+      }
 
-      return () => stickers.forEach((d) => d.kill())
+      return () => removeEventListener(INTRO_EVENT, intro)
     },
     { scope: root },
   )
 
-  const scrollTo = (id: string) => {
-    if (lenis) lenis.scrollTo(id, { duration: 2.2 })
-    else document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const grin = (on: boolean) => mascot.current?.mood(on ? 'grin' : 'smile')
 
   return (
-    <section
-      id="hero"
-      ref={root}
-      className="bg-halftone relative grid min-h-svh items-center overflow-hidden px-4 py-16 md:grid-cols-2 md:px-12"
-    >
-      <div ref={content} className="relative z-10 space-y-6">
-        <span
-          data-pop
-          className="cartoon-box inline-flex items-center gap-2 rounded-full bg-white px-4 py-1 font-black uppercase"
-        >
-          <span className="size-3 animate-blink rounded-full bg-pop-red" /> No ar · Creative Web Dev
-        </span>
-        <h1
-          ref={title}
-          className="text-outline text-6xl leading-[0.95] text-white md:text-8xl"
-          data-cursor=""
-        >
-          Olá, eu faço a web pular!
-        </h1>
-        <p data-pop className="max-w-md text-lg font-bold">
-          Experiências interativas com 3D, motion e muita personalidade. Passe o mouse no título,
-          arraste os adesivos e clique no nó.
-        </p>
-        <div data-pop className="flex flex-wrap gap-4">
-          <Button variant="cyan" onClick={() => scrollTo('#three')} data-cursor="bora!">
-            Explorar <ArrowDown strokeWidth={3} />
-          </Button>
-          <Button variant="pink" onClick={() => scrollTo('#contact')} data-cursor="não!">
-            Não aperte <Siren strokeWidth={3} />
-          </Button>
+    <section className="hero" id="topo" ref={root}>
+      <div className="dots" aria-hidden />
+      <div className="wrap hero-grid">
+        <div className="hero-text">
+          <span className="tag">★ Design · Motion · Sites</span>
+          <h1 className="h1" aria-label="Cauê Gabriel">
+            <span className="line l1">Cauê</span>
+            <span className="line l2">Gabriel</span>
+          </h1>
+          <p className="lead">
+            Eu crio marcas, <mark>animações vetoriais</mark> e sites que se mexem de verdade. Tudo começa num
+            rabisco e termina em GSAP e Three.js.
+          </p>
+          <div className="ctas">
+            <a className="btn btn-acid" href="#habilidades" onPointerEnter={() => grin(true)} onPointerLeave={() => grin(false)}>
+              Entrar na TV ↓
+            </a>
+            <a
+              className="btn btn-paper"
+              href={waLink()}
+              target="_blank"
+              rel="noopener"
+              onPointerEnter={() => grin(true)}
+              onPointerLeave={() => grin(false)}
+            >
+              Chamar no WhatsApp
+            </a>
+          </div>
         </div>
-      </div>
-
-      {/* Adesivos arrastáveis */}
-      <div
-        data-sticker
-        data-cursor="arraste"
-        className="absolute top-[2%] right-[4%] z-20 w-20 touch-none md:top-[14%] md:right-[34%] md:w-40"
-      >
-        <svg viewBox="0 0 150 150" className="drop-shadow-[4px_4px_0_#000]">
-          <polygon points={burst} fill="#ffe600" stroke="#000" strokeWidth="5" strokeLinejoin="round" />
-          <text
-            x="75"
-            y="86"
-            textAnchor="middle"
-            className="font-display"
-            fontSize="30"
-            fill="#ff3ea5"
-            stroke="#000"
-            strokeWidth="2"
-          >
-            WOW!
-          </text>
-        </svg>
-      </div>
-
-      <div
-        data-sticker
-        data-cursor="arraste"
-        className="absolute right-[10%] bottom-[10%] z-20 hidden w-24 touch-none md:block"
-      >
-        <svg viewBox="0 0 100 140" className="drop-shadow-[4px_4px_0_#000]">
-          <polygon
-            points="58,4 14,78 46,78 34,136 88,52 56,52 74,4"
-            fill="#ff3ea5"
-            stroke="#000"
-            strokeWidth="5"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-
-      <div
-        data-sticker
-        data-cursor="arraste"
-        className="absolute right-[30%] bottom-[8%] z-20 hidden size-32 touch-none md:block"
-      >
-        <div className="cartoon-box grid size-full place-items-center rounded-full bg-pop-green">
-          <svg data-spin viewBox="0 0 120 120" className="absolute inset-0 size-full">
-            <defs>
-              <path id="badge-circle" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
-            </defs>
-            <text className="font-display" fontSize="13" letterSpacing="2">
-              <textPath href="#badge-circle">• FEITO À MÃO • COM CÓDIGO </textPath>
-            </text>
-          </svg>
-          <Hand strokeWidth={3} className="size-8" />
+        <div className="hero-art">
+          <div className="burst" aria-hidden />
+          {[
+            { cls: 'spark', style: { left: '6%', top: '14%' } },
+            { cls: 'spark m', style: { right: '8%', bottom: '20%', width: 34 } },
+            { cls: 'spark o', style: { left: '14%', bottom: '10%', width: 28 } },
+          ].map((s, i) => (
+            <svg key={i} className={s.cls} style={s.style} viewBox="-24 -24 48 48" aria-hidden>
+              <path d={STAR_PATH} />
+            </svg>
+          ))}
+          <div className="bubble" aria-live="polite">
+            <span ref={bubble}>E aí! Bora criar?</span>
+            <span className="caret" />
+          </div>
+          <Mascot ref={mascot} />
         </div>
+        <svg className="hero-sq" viewBox="0 0 180 90" aria-hidden>
+          <path d="M6 60 C30 10 50 90 74 44 S120 6 132 52 S166 70 174 30" />
+        </svg>
       </div>
     </section>
   )

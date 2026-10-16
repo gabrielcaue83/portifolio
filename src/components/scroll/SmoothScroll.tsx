@@ -29,7 +29,20 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     // oxlint-disable-next-line react/set-state-in-effect
     setLenis(instance)
 
+    // Links internos (#secao) rolam suave pelo Lenis, descontando o menu fixo
+    const onClick = (e: MouseEvent) => {
+      const a = e.target instanceof Element ? e.target.closest<HTMLAnchorElement>('a[href^="#"]') : null
+      const hash = a?.getAttribute('href')
+      if (!hash || hash === '#') return
+      const target = hash === '#topo' ? 0 : document.querySelector<HTMLElement>(hash)
+      if (target === null) return
+      e.preventDefault()
+      instance.scrollTo(target, { offset: -72, duration: 1.6 })
+    }
+    document.addEventListener('click', onClick)
+
     return () => {
+      document.removeEventListener('click', onClick)
       gsap.ticker.remove(tick)
       instance.destroy()
       setLenis(null)

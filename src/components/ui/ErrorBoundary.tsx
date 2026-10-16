@@ -26,11 +26,11 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.props.fallback) return this.props.fallback(error)
 
     return (
-      <div className="grid min-h-svh place-items-center bg-pop-yellow p-4">
-        <div className="cartoon-box max-w-lg space-y-3 rounded-3xl bg-white p-6">
-          <h1 className="text-3xl">Ops! Algo quebrou 💥</h1>
+      <div className="grid min-h-svh place-items-center bg-acid p-4">
+        <div className="max-w-lg space-y-3 rounded-3xl border-[3px] border-ink bg-paper p-6 shadow-cartoon">
+          <h1 className="font-display text-4xl font-black uppercase">Ops! Algo quebrou 💥</h1>
           <p className="font-bold">Recarregue a página. Se continuar, este é o erro:</p>
-          <pre className="overflow-auto rounded-xl border-4 border-black bg-black p-3 text-sm whitespace-pre-wrap text-pop-green">
+          <pre className="overflow-auto rounded-xl border-4 border-black bg-black p-3 text-sm whitespace-pre-wrap text-acid">
             {error.message}
           </pre>
         </div>

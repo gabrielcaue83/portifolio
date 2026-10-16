@@ -9,7 +9,7 @@ import {
 import { BlendFunction, type ChromaticAberrationEffect, type ScanlineEffect } from 'postprocessing'
 import { useEffect, useRef } from 'react'
 import { Vector2 } from 'three'
-import { fx } from '../../lib/rig'
+import { fx } from '../../lib/panic'
 
 // Leve: só alguns pixels de separação RGB, mais forte nas bordas (radialModulation)
 const BASE_OFFSET = new Vector2(0.0015, 0.001)

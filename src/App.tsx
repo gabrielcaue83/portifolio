@@ -1,38 +1,54 @@
 import { SoundToggle } from './components/audio/SoundToggle'
-import { Experience } from './components/canvas/Experience'
-import { CameraDirector } from './components/scroll/CameraDirector'
 import { SmoothScroll } from './components/scroll/SmoothScroll'
-import { ContactSection } from './components/sections/ContactSection'
-import { GsapSection } from './components/sections/GsapSection'
+import { About } from './components/sections/About'
+import { Contact } from './components/sections/Contact'
+import { Fim } from './components/sections/Fim'
+import { Footer } from './components/sections/Footer'
 import { Hero } from './components/sections/Hero'
-import { MotionSection } from './components/sections/MotionSection'
-import { ThreeSection } from './components/sections/ThreeSection'
+import { Nav } from './components/sections/Nav'
+import { Process } from './components/sections/Process'
+import { Services } from './components/sections/Services'
+import { Skills } from './components/sections/skills/Skills'
+import { Work } from './components/sections/Work'
+import { ClickStars } from './components/ui/ClickStars'
 import { CustomCursor } from './components/ui/CustomCursor'
-import { ErrorBoundary } from './components/ui/ErrorBoundary'
-import { Marquee } from './components/ui/Marquee'
+import { Wave } from './components/ui/Decor'
+import { Iris } from './components/ui/Iris'
+import { LineBoil } from './components/ui/LineBoil'
+import { Marquees } from './components/ui/Marquees'
 import { PanicOverlay } from './components/ui/PanicOverlay'
+import { Reveals } from './components/ui/Reveals'
 
 export default function App() {
   return (
     <SmoothScroll>
-      {/* Sem WebGL (ou se o 3D falhar) o site continua, só sem o mundo 3D */}
-      <ErrorBoundary fallback={() => <div className="fixed inset-0 z-0 bg-pop-yellow" />}>
-        <Experience />
-      </ErrorBoundary>
+      <LineBoil />
+      <Iris />
+      <div className="grain" aria-hidden />
       <CustomCursor />
+      <ClickStars />
 
-      {/* Seções transparentes, sobrepostas ao canvas 3D fixo */}
-      <main className="relative z-10">
+      <Nav />
+      <main>
         <Hero />
-        <Marquee />
-        <ThreeSection />
-        <GsapSection />
-        <MotionSection />
-        <ContactSection />
+        <Marquees />
+        <About />
+        <Wave from="var(--paper)" to="var(--ink)" />
+        <Skills />
+        <Wave from="var(--ink)" to="var(--acid)" variant="b" />
+        <Services />
+        <Wave from="var(--acid)" to="var(--paper)" />
+        <Process />
+        <Wave from="var(--paper)" to="var(--mag)" variant="b" />
+        <Work />
+        <Wave from="var(--mag)" to="var(--orange)" />
+        <Contact />
+        <Fim />
       </main>
+      <Footer />
 
-      {/* Depois das seções: os pins já existem quando o trilho da câmera é medido */}
-      <CameraDirector />
+      {/* Depois das seções: as entradas no scroll enxergam o DOM inteiro */}
+      <Reveals />
       <PanicOverlay />
       <SoundToggle />
     </SmoothScroll>

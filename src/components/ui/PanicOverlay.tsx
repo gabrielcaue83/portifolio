@@ -1,13 +1,12 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useRef, useState } from 'react'
-import { PANIC_EVENT } from '../../lib/panic'
-import { fx } from '../../lib/rig'
+import { fx, PANIC_EVENT } from '../../lib/panic'
 import { audio } from '../audio/audioManager'
 
 /**
  * O Easter Egg em si: sirene, tela piscando em vermelho, página tremendo e o
- * mundo 3D em colapso (fx.panic é lido pelo World, CRTEffects e estações).
+ * Chiado perdendo o sinal (fx.panic também é lido pelo pós-processamento 3D).
  */
 export function PanicOverlay() {
   const root = useRef<HTMLDivElement>(null)
@@ -59,12 +58,12 @@ export function PanicOverlay() {
   return (
     <>
       <div ref={root} className="pointer-events-none invisible fixed inset-0 z-[90] grid place-items-center px-4">
-        <div data-flash className="absolute inset-0 bg-pop-red opacity-0" />
-        <div ref={message} className="cartoon-box relative rounded-3xl bg-pop-yellow px-8 py-6 text-center">
-          <p className="text-outline font-display text-4xl text-white uppercase md:text-7xl">
+        <div data-flash className="absolute inset-0 bg-mag opacity-0" />
+        <div ref={message} className="relative rounded-3xl border-[3px] border-ink bg-acid px-8 py-6 text-center shadow-cartoon">
+          <p className="font-display text-5xl leading-none font-black text-paper uppercase [-webkit-text-stroke:2px_#0E0E0E] [text-shadow:4px_4px_0_#0E0E0E] md:text-8xl">
             Não entre em pânico!
           </p>
-          <p className="mt-2 text-lg font-black">(tarde demais)</p>
+          <p className="mt-2 font-mono text-lg font-bold">(tarde demais)</p>
         </div>
       </div>
       <p className="sr-only" aria-live="assertive">

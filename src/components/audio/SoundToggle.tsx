@@ -9,8 +9,7 @@ export function SoundToggle() {
       onClick={toggleMute}
       aria-label={muted ? 'Ativar som' : 'Desativar som'}
       aria-pressed={!muted}
-      data-cursor={muted ? 'som' : 'shh'}
-      className={`cartoon-box cartoon-press fixed right-4 bottom-4 z-50 grid size-14 place-items-center rounded-full ${muted ? 'bg-white' : 'bg-pop-green'}`}
+      className={`btn fixed right-4 bottom-4 z-50 size-14 !justify-center !p-0 ${muted ? 'btn-paper' : 'btn-acid'}`}
     >
       {muted ? <VolumeX strokeWidth={3} /> : <Volume2 strokeWidth={3} />}
     </button>
